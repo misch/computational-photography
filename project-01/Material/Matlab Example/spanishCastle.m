@@ -4,24 +4,20 @@ function [grey inverted] = spanishCastle( img )
 %   - img: an RGB color image
 %   Output
 %   - grey: the greyscale image of the inupt image
-%   - inverted: the invertet color image of the input
-
-
-
-% replace the following example code with yours!
-disp('spanishCastle was called');
+%   - inverted: the inverted color image of the input
 
 % Convert the RGB colors to YUV color space.
 img_yuv = rgb2yuv( img );
 
 % Use the input Y channel to form the grey image.
-grey = imread('imgs/castle_grey.jpg');
+grey = img_yuv(:,:,1);
 
-% To obtain the inverted image, set the Y channel to 0.6 for all pixels,
-% convert back to RGB, and invert the RGB colors by taking one minus the
-% RGB values. The result is the inverted image.
-inverted = imread('imgs/castle_inverted.jpg');
+% set Y channel to 0.6
+inverted = img_yuv;
+inverted(:,:,1) = 0.6;
 
+% convert back to rgb and invert RGB colors
+inverted = 1 - yuv2rgb(inverted);
 
 end
 
