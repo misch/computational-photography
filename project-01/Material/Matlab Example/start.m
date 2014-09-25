@@ -24,10 +24,9 @@ title('Inverted image');
 %% Assignement 2.1
 img = imread('foliage_raw.tiff');
 
-% Scale to [0,1]
-img = im2double(img);
-% img = im2double(img);
-% imtool(img)
+% Convert to double and normalize values to [0,1]
+img = double(img)/double(max(max(img)));
+
 demosaicBayer(img);
 % Proceed similarly...
 
