@@ -27,8 +27,10 @@ img = imread('foliage_raw.tiff');
 % Convert to double and normalize values to [0,1]
 img = double(img)/double(max(max(img)));
 
-demosaicBayer(img);
-% Proceed similarly...
+demosaiced = demosaicBayer(img);
+figure(1);
+imshow(demosaiced);
+title('Bayer Demosaicing (Bilinear Filtering)');
 
 %% Assignement 2.2
 
