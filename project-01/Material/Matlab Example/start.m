@@ -36,6 +36,11 @@ figure(2);
 imshow(demosaiced);
 title('Bayer Demosaicing (Bilinear Filtering)');
 
+medianDemosaiced = demosaicMedian(img, [5 5]);
+figure(3)
+imshow(medianDemosaiced);
+title('5x5 Median demosaicing')
+
 %% Assignement 2.2
 img = im2double(imread('black and white raw.tif'));
 
@@ -51,6 +56,9 @@ imshow(imgMedian);
 title('median');
 
 %% Assignement 2.3
+img = im2double(imread('interior.jpg'));
+
+balance(img);
 
 
 %% Assignement 2.4
