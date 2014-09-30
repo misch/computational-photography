@@ -27,13 +27,28 @@ img = imread('foliage_raw.tiff');
 % Convert to double and normalize values to [0,1]
 img = double(img)/double(max(max(img)));
 
-demosaiced = demosaicBayer(img);
 figure(1);
+imshow(img);
+title('Input image (gray-scale)');
+
+demosaiced = demosaicBayer(img);
+figure(2);
 imshow(demosaiced);
 title('Bayer Demosaicing (Bilinear Filtering)');
 
 %% Assignement 2.2
+img = im2double(imread('black and white raw.tif'));
 
+imgBayer = demosaicBayer(img);
+figure(1);
+imshow(imgBayer);
+title('linear');
+
+imgMedian = demosaicMedian(img, [5 5]);
+
+figure(2);
+imshow(imgMedian);
+title('median');
 
 %% Assignement 2.3
 
