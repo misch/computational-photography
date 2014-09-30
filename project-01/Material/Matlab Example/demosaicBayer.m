@@ -4,18 +4,9 @@ function out = demosaicBayer( img )
 % Output: M x N x 3 matrix representing a RGB color image. The image is
 % demosaiced using Bilinear Filtering.
 
-% Create r-, g-, and b-mask to filter out the separate colors from the RAW
+% Create r-, g-, and b-mask to filter out the separate colors from the RAW 
 % input
-rMask = zeros(size(img));
-gMask = zeros(size(img));
-bMask = zeros(size(img));
-
-rMask(1:2:end,1:2:end) = 1;
-
-gMask(2:2:end,1:2:end) = 1;
-gMask(1:2:end,2:2:end) = 1;
-
-bMask(2:2:end,2:2:end) = 1;
+[rMask gMask bMask] = rgbMasks(size(img));
 
 % Filter out the separate color channels
 red_img     = img   .* rMask;
@@ -24,9 +15,10 @@ blue_img    = img   .* bMask;
 
 % Convolution of image with 3x3-matrix containing only 1's;
 % Normalization (because not everywhere the same amount of non-zero pixels)
-red_img_conv    =   conv2(red_img,ones(3),'same')   ./ conv2(rMask,ones(3),'same');
-green_img_conv  =   conv2(green_img,ones(3),'same') ./ conv2(gMask,ones(3),'same');
-blue_img_conv   =   conv2(blue_img,ones(3),'same')  ./ conv2(bMask,ones(3),'same');
+kernel = ones(3);
+red_img_conv    =   conv2(red_img,kernel,'same')   ./ conv2(rMask,kernel,'same');
+green_img_conv  =   conv2(green_img,kernel,'same') ./ conv2(gMask,kernel,'same');
+blue_img_conv   =   conv2(blue_img,kernel,'same')  ./ conv2(bMask,kernel,'same');
 
 % Add the interpolated color values to the holes in the image.
 rNew = red_img      +  ~rMask .* red_img_conv;
