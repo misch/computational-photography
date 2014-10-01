@@ -60,6 +60,18 @@ balance(img);
 
 
 %% Assignement 2.4
+img = im2double(imread('imgs/castle.jpg'));
+img2 = im2double(imread('imgs/airport.jpg'));
+img2RGB = zeros([size(img2) 3]);
+img2RGB(:,:,1) = img2; img2RGB(:,:,2) = img2; img2RGB(:,:,3) = img2;
 
+contrasted = linearContrast(img, 0.2, 0.8);
+gammaCorrected = gammaCorrect(img2RGB, 4);
+
+figure(1);
+imshow([img contrasted])
+
+figure(2);
+imshow([img2RGB gammaCorrected]);
 
 %% Bonus
