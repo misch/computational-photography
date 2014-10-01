@@ -9,7 +9,7 @@
 \usepackage{subcaption}
 \usepackage{here}
 
-\title{Computational Photography, Assignment 1}
+\title{Computational Photography \\ Project 1, Fall 2014}
 
 \author{Mich\`ele Wyss, 10-104-123}
 
@@ -90,7 +90,63 @@ The Spanish Castle illusion is an astonishing effect to demonstrate how the huma
 		\caption*{Gray-scale image}
 	\end{subfigure}	
 \caption{The spanish castle illusion with the example of a photograph captured near Cassis in May 2014.}
-\label{fig:road}
+\label{fig:calanque}
 \end{figure}
+
+\section{Processing RAW Images}
+\begin{figure}[H]
+	\centering
+	\vspace{3mm}
+	\begin{subfigure}[h]{0.48\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{raw_forest_input}
+		\caption*{Input}
+	\end{subfigure}
+	~
+	\begin{subfigure}[h]{0.48\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{raw_forest_demosaiced_linear}
+		\caption*{Demosaiced}
+	\end{subfigure}	
+\caption{Left: Input RAW data. Every pixel only contains the red, green or blue value, but never more than one. Therefore it can be represented by a gray-scale image. Right: Reconstructed (demosaiced) RGB image through bilinear filtering.}
+\label{fig:demosaicLin}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\begin{subfigure}[h]{0.48\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{black_and_white_bilinear_interpolated}
+		\caption*{Bilinear interpolation}
+	\end{subfigure}
+	~
+	\begin{subfigure}[h]{0.48\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{black_and_white_median_filtered_3x3}
+		\caption*{3x3 median filtered}
+	\end{subfigure}	
+	
+	\vspace{3mm}
+	\centering
+	\begin{subfigure}[h]{0.32\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{black_and_white_bilinear_interpolated_zoom}
+		\caption*{Zoom bilinear}
+	\end{subfigure}
+	\begin{subfigure}[h]{0.32\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{black_and_white_median_filtered_3x3_zoom}
+		\caption*{Zoom 3x3 median}
+	\end{subfigure}
+	\begin{subfigure}[h]{0.32\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{black_and_white_median_filtered_5x5_zoom}
+		\caption*{Zoom 5x5median}
+	\end{subfigure}
+\caption{Comparison between bilinear interpolation and median filtering.}
+\label{fig:calanque}
+\end{figure}
+\todo{Write something, maybe do cool plots}
+\section{Color Balancing}
 
 \end{document}

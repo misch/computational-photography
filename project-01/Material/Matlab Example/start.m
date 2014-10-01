@@ -28,16 +28,13 @@ img = double(img)/double(max(max(img)));
 figure(1);
 imshow(img);
 title('Input image (gray-scale)');
+% imwrite(img,'imgs\input.png');
 
 demosaiced = demosaicBayer(img);
 figure(2);
 imshow(demosaiced);
 title('Bayer Demosaicing (Bilinear Filtering)');
-
-medianDemosaiced = demosaicMedian(img, [5 5]);
-figure(3)
-imshow(medianDemosaiced);
-title('5x5 Median demosaicing')
+% imwrite(demosaiced,'imgs\demosaiced_linear.png');
 
 %% Assignement 2.2
 img = im2double(imread('black and white raw.tif'));
@@ -46,12 +43,14 @@ imgBayer = demosaicBayer(img);
 figure(1);
 imshow(imgBayer);
 title('linear');
+% imwrite(imgBayer,'imgs\black_and_white_demosaiced_linear.png');
 
 imgMedian = demosaicMedian(img, [5 5]);
 
 figure(2);
 imshow(imgMedian);
 title('median');
+imwrite(imgMedian,'imgs\black_and_white_demosaiced_median_filtered.png');
 
 %% Assignement 2.3
 img = im2double(imread('interior.jpg'));
