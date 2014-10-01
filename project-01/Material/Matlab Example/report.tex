@@ -7,8 +7,9 @@
 \usepackage[colorinlistoftodos]{todonotes}
 \usepackage{caption}
 \usepackage{subcaption}
+\usepackage{here}
 
-\title{Computational Photography}
+\title{Computational Photography, Assignment 1}
 
 \author{Mich\`ele Wyss, 10-104-123}
 
@@ -17,13 +18,12 @@
 \graphicspath{{imgs/}}
 \begin{document}
 \maketitle
-\section*{The Spanish Castle illusion}
-The Spanish Castle illusion is an astonishing effect to demonstrate how the human eye adapts to context in an image. 
-Color perception is a relative thing that depends on the surrounding context. By constructing an ``inverted'' image, we can demonstrate how the human eye can be influenced... \todo{to be continued}
+\section{The Spanish Castle illusion}
+The Spanish Castle illusion is an astonishing effect to demonstrate how the human eye can be influenced by temporal effects.  In the 19$^{\text{th}}$ century, the so-called \emph{Opponent process theory} was proposed. According to this theory, the color perception of a human eye is controlled by ``encoding'' colors as red vs.\ green,  blue vs.\ yellow and blak vs.\ white. Further, the theory states that are two types of chemical reactions, namely \emph{anabolic} and \emph{catabolic} processes. For simplicity, one could understand them as ``positive'' or ``negative'' reactions. The processes are in a sense the opposite of each other. The positive reaction yields one member of an opponent pair, whereas the negative reaction yields the other one. An anabolic process requires energy and a catabolic one releases energy. If a stimulus of a certain color is given, then the corresponding process will be reversed after the stimulus is removed again, and this will give the impression of perceiving the opposite color.
 \section*{Example images}
-\begin{figure}[ht]
-	\centering
-	\begin{subfigure}[h]{0.48\textwidth}
+\begin{figure}[H]
+	%\centering
+	\begin{subfigure}[h]{0.24\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{rainbow}
 		\caption*{Input image}
@@ -41,8 +41,56 @@ Color perception is a relative thing that depends on the surrounding context. By
 		\includegraphics[width=\textwidth]{rainbow_gray}
 		\caption*{Gray-scale image}
 	\end{subfigure}	
-\caption{The spanish castle illusion with the example of a photograph with a rainbow captured in Bern in September 2013.}
+\caption{The spanish castle illusion with the example of a photograph with a rainbow captured in Bern in September 2013. Starring at the inverted image long enough and then at the gray-scale image will produce the astonishing effect of perceiving the original colors in the gray-scale image.}
 \label{fig:rainbow}
+\end{figure}
+
+\begin{figure}[H]
+	%\centering
+	\begin{subfigure}[h]{0.24\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{road}
+		\caption*{Input image}
+	\end{subfigure}
+	
+	\vspace{3mm}
+	\begin{subfigure}[h]{0.48\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{road_inv}
+		\caption*{Inverted image}
+	\end{subfigure}
+	~
+	\begin{subfigure}[h]{0.48\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{road_gray}
+		\caption*{Gray-scale image}
+	\end{subfigure}	
+\caption{The spanish castle illusion with the example of a photograph captured near Bern in July 2014.}
+\label{fig:road}
+\end{figure}
+
+\begin{figure}[H]
+	%\centering
+	\begin{subfigure}[h]{0.24\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{calanque}
+		\caption*{Input image}
+	\end{subfigure}
+	
+	\vspace{3mm}
+	\begin{subfigure}[h]{0.48\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{calanque_inv}
+		\caption*{Inverted image}
+	\end{subfigure}
+	~
+	\begin{subfigure}[h]{0.48\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{calanque_gray}
+		\caption*{Gray-scale image}
+	\end{subfigure}	
+\caption{The spanish castle illusion with the example of a photograph captured near Cassis in May 2014.}
+\label{fig:road}
 \end{figure}
 
 \end{document}
