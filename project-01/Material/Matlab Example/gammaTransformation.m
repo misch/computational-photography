@@ -1,4 +1,4 @@
-function out = gammaCorrect(img, gamma)
+function out = gammaTransformation(img, gamma)
 
 imgYUV = rgb2yuv(img);
 

@@ -60,17 +60,31 @@ balance(img);
 
 %% Assignement 2.4
 img = im2double(imread('imgs/castle.jpg'));
-img2 = im2double(imread('imgs/airport.jpg'));
-img2RGB = zeros([size(img2) 3]);
-img2RGB(:,:,1) = img2; img2RGB(:,:,2) = img2; img2RGB(:,:,3) = img2;
+img2_gray = im2double(imread('imgs/airport.jpg'));
+img2 = zeros([size(img2_gray) 3]);
+img2(:,:,1) = img2_gray; img2(:,:,2) = img2_gray; img2(:,:,3) = img2_gray;
 
-contrasted = linearContrast(img, 0.2, 0.8);
-gammaCorrected = gammaCorrect(img2RGB, 4);
-
+contrasted = linearContrast(img2, 0.3, 0.7);
 figure(1);
-imshow([img contrasted])
+imshow([img2 contrasted]);
+% imwrite(img2, 'imgs\linearContrast_input2.png');
+% imwrite(contrasted, 'imgs\linearContrast_output2.png');
 
+gammaCorrected = gammaTransformation(img2, 4);
 figure(2);
-imshow([img2RGB gammaCorrected]);
+imshow([img2 gammaCorrected]);
+% imwrite(gammaCorrected, 'imgs\gammaContrast_output2.png');
+
+% Plot
+inputYUV = rgb2yuv(img2);
+inputIntensity = inputYUV(:,:,1);
+inputIntensity = sort(reshape(inputIntensity,[],1));
+
+outputYUV = rgb2yuv(gammaCorrected);
+outputIntensity = outputYUV(:,:,1);
+outputIntensity = sort(reshape(outputIntensity,[],1));
+figure(3);
+plot(inputIntensity, outputIntensity);
+xlabel('Input intensity'); ylabel('Output intensity');
 
 %% Bonus
