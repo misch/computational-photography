@@ -50,12 +50,16 @@ imgMedian = demosaicMedian(img, [5 5]);
 figure(2);
 imshow(imgMedian);
 title('median');
-imwrite(imgMedian,'imgs\black_and_white_demosaiced_median_filtered.png');
+% imwrite(imgMedian,'imgs\black_and_white_demosaiced_median_filtered.png');
 
 %% Assignement 2.3
-img = im2double(imread('interior.jpg'));
+img = im2double(imread('imgs\interior.png'));
 
-balance(img);
+balanced = balance(img);
+
+figure(1);
+imshow(balanced);
+% imwrite(balanced, 'imgs\interior_manual_fail2.png')
 
 
 %% Assignement 2.4
@@ -88,3 +92,4 @@ plot(inputIntensity, outputIntensity);
 xlabel('Input intensity'); ylabel('Output intensity');
 
 %% Bonus
+% Try out the balance method!
