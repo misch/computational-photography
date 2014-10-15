@@ -16,8 +16,11 @@ function out = bfilt(im, sigma_s, sigma_r)
     spatial_kernel = exp(-(X_diff.^2 + Y_diff.^2) / (2*sigma_s^2));
     
     out = zeros(size(im));
+    
+    h = waitbar(0,'Bilateral Filtering');
     for x = 1:size(im,1)
        for y = 1:size(im,2)
+
           % Extract the current local region
           x_min = max(x-kernel_size,1);
           x_max = min(x+kernel_size,size(im,1));  
@@ -40,4 +43,6 @@ function out = bfilt(im, sigma_s, sigma_r)
           normalization = 1/sum(sum(bilateral_kernel));
           out(x,y) = sum(sum(avg_region .* bilateral_kernel  ))*normalization; 
        end
+       waitbar(x/size(im,1));
     end
+    close(h);
