@@ -14,3 +14,9 @@ title('Input image');
 figure(2);
 imshow(filtered);
 title(['Bilateral filtered: \sigma_s = ', num2str(sigma_s) , ', \sigma_s = ', num2str(sigma_r)]);
+
+%% Assignment 2.3/ - Tone mapping using bilateral filtering
+img = hdrread('hdr-files/church.hdr');
+
+tonemappedBilateral = tonemapBilateral(img,2,0.12,40);
+tonemappedGaussian = tonemapGaussian(img,8,40);
