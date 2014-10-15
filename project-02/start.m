@@ -20,3 +20,10 @@ img = hdrread('hdr-files/church.hdr');
 
 tonemappedBilateral = tonemapBilateral(img,2,0.12,40);
 tonemappedGaussian = tonemapGaussian(img,8,40);
+
+%% Assignment 3 - Two-Scale Photographic Tone Adjustment
+input = im2double(imread('imgs/toneAdjustment_sample_input.png'));
+model = im2double(imread('imgs/toneAdjustment_sample_model.png'));
+
+adjusted = adjustTone(input(:,:,1),model(:,:,1),4);
+imtool(adjusted);
