@@ -158,7 +158,87 @@ By finding appropriate values for the standard deviations, one can achieve smoot
 \caption{Suitable values for $\sigma_s$ and $\sigma_r$ allow smoothing while preserving strong edges. However, sometimes it's difficult to find appropriate values such that all the edges are captured by the range kernel. This may lead to artifacts (blurred regions even though there would be edges), which is visible above at Jerry's neck.}
 \label{fig:edge-preserving-smoothing}
 \end{figure}
+\subsection*{Examples}
+In Figure \ref{fig:tonemap-example} there are several output exmaples of tonemapping using bilateral filtering. Whereas the images ``Bench''  and ``Church'' are good results, one can see that even small changes in scenes may cause the whole procedure to fail because we didn't use any alignment while producing the hdr images. Therefore, you can see a ghost-motorcycle on the ``M\"unster'' image and ``Stairs'' seems to be blurry/shaky.
+\begin{figure}[ht]
+	\centering
+	\begin{subfigure}[h]{0.48\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{tonemap/bench_tonemapped_2_0-12_40}
+		\caption*{Bench}
+	\end{subfigure}
+	~ 
+	\begin{subfigure}[h]{0.48\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{tonemap/stairs_tonemapped_2_0-12_40}
+		\caption*{Stairs}
+	\end{subfigure}	
+	
+	\vspace{2mm}
+	\begin{subfigure}[h]{0.48\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{tonemap/church_tonemapped_2_0-12_40}
+		\caption*{Church}
+	\end{subfigure}
+	~ 
+	\begin{subfigure}[h]{0.48\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{tonemap/muenster_tonemapped_2_0-12_40}
+		\caption*{M\"unster}
+	\end{subfigure}
+\caption{Some examples for tonemapping using Bilateral filtering. For all images, I used $\sigma_s = 2, \sigma_r = 0.12$ and an output range of $40$. Note the weird transparend motorcycle on the ``M\"unster'' image.}
+\label{fig:tonemap-example}
+\end{figure}
+\subsection*{Bilateral vs. Gaussian Filter}
+Because the Gaussian domain filter is not edge-aware, smoothing with this filter causes large differences to the original image at edges. Therefore, the detail layer contains mostly the edges in the image. Since this layer is not further processed but instead only re-added at the end, tonemapping using a simple Gaussian results in visible halo artifacts. They are clearly visible in the example from Figure \ref{fig:tonemap-gauss-bilateral}.
+\begin{figure}[ht]
+	\centering
+	%\textbf{Title}\par\medskip
+	\begin{subfigure}[h]{0.48\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{tonemap_bilateral_5_0-12_200}
+		\caption*{Bilateral, $\sigma_s = 5, \sigma_r = 0.12$}
+	\end{subfigure}
+	~ 
+	\begin{subfigure}[h]{0.48\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{tonemap_gaussian_5_10}
+		\caption*{Gaussian $\sigma = 5$}
+	\end{subfigure}	
+	
+	\vspace{2mm}
+	\begin{subfigure}[h]{0.48\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{tonemap_bilateral_5_0-12_200_zoom}
+		\caption*{Zoomed in (bilateral)}
+	\end{subfigure}
+	~ 
+	\begin{subfigure}[h]{0.48\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{tonemap_gaussian_5_10_zoom}
+		\caption*{Zommed in (Gaussian)}
+	\end{subfigure}
+\caption{Tonemapping using Bilateral and Gaussian filtering, respectively. In the image on the right side, the halo artifacts are clearly visible.}
+\label{fig:tonemap-gauss-bilateral}
+\end{figure}
 
-\subsection*{Tonemapping -- Bilateral vs. Gaussian Filter}
-\todo{Text and comparisons go here!}
+\section*{Tone adjustment}
+\begin{figure}[ht]
+	\centering
+	%\textbf{Title}\par\medskip
+	\begin{subfigure}[h]{0.48\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{toneAdjust1}
+		\caption*{Bilateral, $\sigma_s = 5, \sigma_r = 0.12$}
+	\end{subfigure}
+	~ 
+	\begin{subfigure}[h]{0.48\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{toneAdjust2}
+		\caption*{Gaussian $\sigma = 5$}
+	\end{subfigure}	
+
+\caption{Tone adjustment for a gray and an rgb image.}
+\label{fig:tonemap-gauss-bilateral}
+\end{figure}
 \end{document}
