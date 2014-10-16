@@ -40,8 +40,7 @@ function out = bfilt(im, sigma_s, sigma_r)
           bilateral_kernel = used_spatial_kernel .* range_kernel;
           
           % Apply the filter to the current pixel, normalize
-          normalization = 1/sum(sum(bilateral_kernel));
-          out(x,y) = sum(sum(avg_region .* bilateral_kernel  ))*normalization; 
+          out(x,y) = sum(sum(avg_region .* bilateral_kernel  ))/sum(sum(bilateral_kernel));
        end
        waitbar(x/size(im,1));
     end
