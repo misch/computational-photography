@@ -9,5 +9,3 @@ model_base = bfilt(model,2,0.08);
 matched = histeq(input_base,imhist(model_base));
 
 out = matched + detailScale * input_detail;
-%imtool([input_base input_detail]);
-% out = input;

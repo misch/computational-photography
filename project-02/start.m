@@ -18,12 +18,22 @@ title(['Bilateral filtered: \sigma_s = ', num2str(sigma_s) , ', \sigma_s = ', nu
 %% Assignment 2.3/ - Tone mapping using bilateral filtering
 img = hdrread('hdr-files/church.hdr');
 
-tonemappedBilateral = tonemapBilateral(img,2,0.12,40);
-tonemappedGaussian = tonemapGaussian(img,8,40);
+tonemappedBilateral = tonemapBilateral(img,5,0.12,200);
+tonemappedGaussian = tonemapGaussian(img,5,10);
+
+figure(1);
+imshow([tonemappedBilateral tonemappedGaussian]);
+title('Tonemapping using Bilateral and Gaussian Filtering');
 
 %% Assignment 3 - Two-Scale Photographic Tone Adjustment
-input = im2double(imread('imgs/toneAdjustment_sample_input.png'));
-model = im2double(imread('imgs/toneAdjustment_sample_model.png'));
+input = im2double(imread('imgs/rock.png'));
+model = im2double(imread('imgs/winterstorm.png'));
 
-adjusted = adjustTone(input(:,:,1),model(:,:,1),4);
-imtool(adjusted);
+adjusted = adjustTone(rgb2gray(input),rgb2gray(model),4);
+adjusted2 = adjustToneRGB(input,model,4);
+
+figure(1);
+imshow(adjusted);
+
+figure(2);
+imshow(adjusted2);
