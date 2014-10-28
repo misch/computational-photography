@@ -9,6 +9,7 @@ g = img(:,:,2)./input_intensity;
 b = img(:,:,3)./input_intensity;
 
 log_base = bfilt(log(input_intensity),sigma_s, sigma_r);
+imtool(exp(log_base));
 log_detail = log(input_intensity) - log_base;
 imtool(exp(log_detail));
 
