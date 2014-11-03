@@ -1,0 +1,535 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      --><title>start</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2014-10-30"><meta name="m-file" content="start"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">1. Sampling and aliasing</a></li><li><a href="#4">2. 1D discrete Fourier Transform (DFT)</a></li><li><a href="#10">3. 2D discrete Fourier Transform (DFT)</a></li><li><a href="#16">4. Constructing a filter directly in the frequency domain</a></li><li><a href="#22">5. Image restoration</a></li></ul></div><pre class="codeinput"><span class="comment">% Script for Project-03</span>
+<span class="comment">% Author: Mich&egrave;le Wyss, 10-104-123</span>
+</pre><h2>1. Sampling and aliasing<a name="2"></a></h2><p>a)</p><pre class="codeinput">clear <span class="string">all</span>;
+N = 16;
+
+<span class="comment">% Define function handle f. For a given k,</span>
+<span class="comment">% f(k) is a function handle to the anonymous function</span>
+<span class="comment">% @(x) (cos(...)). Like this, it's easy to bind k to a certain value.</span>
+f = @(k,x) (@(x)(cos(x * 2 * pi * k * 1/N)));
+
+<span class="keyword">for</span> k = 1:16
+    <span class="comment">% Bind f to the given k. fk is the function handle of f with fixed</span>
+    <span class="comment">% value k.</span>
+    fk = f(k);
+
+    <span class="comment">%%%%%%%%%%%%%%%%</span>
+    <span class="comment">% Generate plot</span>
+    <span class="comment">%%%%%%%%%%%%%%%%</span>
+    subplot(4,4,k);
+
+    <span class="comment">% "Continuous" function</span>
+    fplot(fk,[0 N]);
+    hold <span class="string">on</span>;
+
+    <span class="comment">% Sampled function</span>
+    stem(fk(1:N));
+
+    <span class="comment">% Indicate the value of k in the title</span>
+    title([<span class="string">'k = '</span>, num2str(k)]);
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="start_01.png" alt=""> <p>b)</p><p>From the plots in a) we can see that f hits Nyquist frequency at k = 8 and therefore at</p><p><img src="start_eq41604.png" alt="$$ w_0 = \frac{(2\pi \cdot 8)}{N} = \frac{(16\pi)}{16} = \pi$$"></p><h2>2. 1D discrete Fourier Transform (DFT)<a name="4"></a></h2><p>a)</p><pre class="codeinput"><span class="comment">% Set M = numbers of samples</span>
+M = 16;
+
+<span class="comment">% Construct matrix F of size MxM and entries</span>
+<span class="comment">% F_nm = n*m</span>
+F = [0:M-1]'*[0:M-1];
+F = exp(-i*2*pi * F/M);
+</pre><p>b)</p><pre class="codeinput"><span class="comment">% Calculate the matrix U (afterwards, check if it's unitary).</span>
+U = F/sqrt(M);
+
+<span class="comment">% There is a minor mistake in the exercise description. In general, for a</span>
+<span class="comment">% unitary matrix U, det(U) = 1 does NOT hold. However, the absolute of the</span>
+<span class="comment">% determinant is 1.</span>
+absDet = roundn(abs(det(U)),-9);
+<span class="keyword">if</span> (absDet == 1)
+    disp(<span class="string">'|det U| = 1'</span>);
+<span class="keyword">end</span>
+
+<span class="comment">% Get the maximum difference between entries in I and the identity matrix</span>
+I = U * conj(U);
+maxDiff = roundn(max(max(abs(eye(M) - I))),-9);
+<span class="keyword">if</span> (maxDiff == 0)
+    disp(<span class="string">'U * conj(U) is the identity matrix.'</span>);
+<span class="keyword">end</span>
+
+I = conj(U) * U;
+maxDiff = roundn(max(max(abs(eye(M) - I))),-9);
+<span class="keyword">if</span> (maxDiff == 0)
+    disp(<span class="string">'conj(U) * U is the identity matrix.'</span>);
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">|det U| = 1
+U * conj(U) is the identity matrix.
+conj(U) * U is the identity matrix.
+</pre><p>c)</p><p>The curves are a bit shifted in their phase.</p><pre class="codeinput">subplot(2,1,1);
+plot(real(F(3,:)),<span class="string">'r'</span>,<span class="string">'LineWidth'</span>,2);
+axis([0 16 -1 1]);
+grid <span class="string">on</span>;
+
+subplot(2,1,2);
+plot(imag(F(3,:)),<span class="string">'r'</span>,<span class="string">'LineWidth'</span>,2);
+axis([0 16 -1 1]);
+grid <span class="string">on</span>;
+</pre><img vspace="5" hspace="5" src="start_02.png" alt=""> <p>d)</p><pre class="codeinput"><span class="keyword">for</span> k = 0:4
+    samplePoints = [0:M-1] *(2*pi/M);
+    fSampled = cos(k*samplePoints);
+
+    transformed = fSampled * F;
+    transformed = fftshift(transformed);
+
+    subplot(5,3,3*k+1);
+    stem(samplePoints,abs(transformed));
+    title([<span class="string">'Mine, k = '</span>,num2str(k)]);
+    axis([0 6 0 20]);
+
+    subplot(5,3,3*k+2);
+    stem(samplePoints,abs(fftshift(fft(fSampled))));
+    title([<span class="string">'fft, k = '</span>,num2str(k)]);
+    axis([0 6 0 20]);
+
+    subplot(5,3,3*k+3);
+    stem(samplePoints,abs(fftshift(fft(fSampled))-transformed));
+    title([<span class="string">'|mine - fft|, k = '</span>,num2str(k)]);
+    axis([0 6 0 20]);
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="start_03.png" alt=""> <p>We can see that the resulting functions have some peeks. They are symmetric because the cosine is an even function .</p><p>e) ...</p><h2>3. 2D discrete Fourier Transform (DFT)<a name="10"></a></h2><p>a)</p><pre class="codeinput">img = imresize(im2double(imread(<span class="string">'calanque_gray.png'</span>)),0.3);
+
+imgFFT = fft2(img);
+</pre><p>b)</p><pre class="codeinput">difference = (sum(img(:))-imgFFT(1,1));
+difference = roundn(difference,-5)
+</pre><pre class="codeoutput">
+difference =
+
+     0
+
+</pre><p>c)</p><pre class="codeinput">DFTpower = imgFFT.*conj(imgFFT);
+
+DFTmean = mean(DFTpower(:))
+imgSum = sum(sum(abs(img).^2))
+
+difference = (DFTmean-imgSum);
+difference = roundn(difference,-5)
+</pre><pre class="codeoutput">
+DFTmean =
+
+  7.7806e+004
+
+
+imgSum =
+
+  7.7806e+004
+
+
+difference =
+
+     0
+
+</pre><p>d)</p><pre class="codeinput">centeredFFT = fftshift(imgFFT);
+</pre><p>e)</p><pre class="codeinput">logScale = log(1 + centeredFFT.*conj(centeredFFT));
+logScale = (logScale-min(logScale(:)))/(max(logScale(:))-min(logScale(:)));
+figure;
+imshow(logScale);
+</pre><img vspace="5" hspace="5" src="start_04.png" alt=""> <p>f)</p><pre class="codeinput">angles = angle(centeredFFT);
+
+normalized = (angles-min(angles(:))) /( max(angles(:)) - min(angles(:)));
+figure;
+imshow(normalized);
+</pre><img vspace="5" hspace="5" src="start_05.png" alt=""> <h2>4. Constructing a filter directly in the frequency domain<a name="16"></a></h2><p>a)</p><pre class="codeinput">imgFFT = fft2(img, 2*size(img,1)+1, 2*size(img,2)+1);
+imgFFT = fftshift(imgFFT);
+</pre><p>b)</p><pre class="codeinput">filterRadius = 10;
+[x y] = meshgrid(-filterRadius:filterRadius,-filterRadius:filterRadius);
+D = x.^2 + y.^2;
+</pre><p>c)Try out different parameters:</p><pre class="codeinput"><span class="comment">% For the high pass filter</span>
+D0 = [0.5 0.5 0.5 0.5 0.25 0.5 1 2];
+n = [0.25, 0.5 1 2 1 1 1 1];
+
+<span class="comment">% For the band pass filter</span>
+W = [1 2 3 4 5 6 7 8];
+
+<span class="keyword">for</span> k = 1:8
+    highPass = -1./(1+(D/D0(k)).^(2*n(k)));
+    subplot(4,2,k);
+    normalized = highPass-min(highPass(:))/(max(highPass(:))-min(highPass(:)));
+    imshow(normalized.^2);
+    title([<span class="string">'D0 = '</span>,num2str(D0(k)),<span class="string">', n = '</span>, num2str(n(k))]);
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="start_06.png" alt=""> <p>- n describes how "sharp" the filter is, i.e. how fast the fall-off is - D0 describes "where" the fall-off is.</p><pre class="codeinput"><span class="comment">% For visualization of bandwidth, keep n=1 and D0=10 fixed, only vary W.</span>
+<span class="keyword">for</span> k = 1:8
+    n = 1;
+    D0 = 10;
+    bandPass = 1./(1+((W(k)*D)./(D.^2 - D0^2)).^(2*n));
+    subplot(4,2,k);
+    normalized = bandPass-min(bandPass(:))/(max(bandPass(:))-min(bandPass(:)));
+    imshow(normalized.^2);
+    title([<span class="string">'D0 = '</span>,num2str(D0),<span class="string">', n = '</span>, num2str(n),<span class="string">', W = '</span>,num2str(W(k))]);
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="start_07.png" alt=""> <p>W describes how fat the ring (bandwidth) is :-)</p><p>d)</p><pre class="codeinput"><span class="comment">% The filter radius should be big enough such that the whole image can be</span>
+<span class="comment">% multiplied with it.</span>
+filterRadius = [floor((size(imgFFT,1))/2), floor(size(imgFFT,2)/2)];
+[x y] = meshgrid(-filterRadius(2):filterRadius(2),-filterRadius(1):filterRadius(1));
+D = x.^2 + y.^2; size(D);
+
+<span class="comment">% Apply high pass filter</span>
+D0 = [0.5 0.5 0.5 0.5 0.25 0.5 1 2];
+n = [0.25, 0.5 1 2 1 1 1 1];
+figure;
+<span class="keyword">for</span> k = 1:8
+    highPass = -1./(1+(D/D0(k)).^(2*n(k)));
+    subplot(4,2,k);
+    filtered = imgFFT .* highPass;
+    imshow(filtered.*conj(filtered));
+    title([<span class="string">'D0 = '</span>,num2str(D0(k)),<span class="string">', n = '</span>, num2str(n(k))]);
+<span class="keyword">end</span>
+
+<span class="comment">% Apply band pass filter</span>
+W = [0.1 0.2 4 5 7 6 5 3];
+figure;
+<span class="keyword">for</span> k = 1:8
+    n = 1;
+    D0 = 3;
+    bandPass = 1./(1+((W(k)*D)./(D.^2 - D0^2)).^(2*n));
+    subplot(4,2,k);
+    filtered = imgFFT .* bandPass;
+    normalized = (filtered-min(filtered(:)))/(max(filtered(:))-min(filtered(:)));
+    power = normalized.*conj(normalized);
+    imshow(power);
+
+    title([<span class="string">'D0 = '</span>,num2str(D0),<span class="string">', n = '</span>, num2str(n),<span class="string">', W = '</span>,num2str(W(k))]);
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="start_08.png" alt=""> <img vspace="5" hspace="5" src="start_09.png" alt=""> <h2>5. Image restoration<a name="22"></a></h2><p>a)</p><pre class="codeinput">G = fspecial(<span class="string">'gaussian'</span>, 6, 2);
+blurred = imfilter(img,G);
+imshow(blurred);
+</pre><img vspace="5" hspace="5" src="start_10.png" alt=""> <p>b)</p><pre class="codeinput">noisy = imnoise(img,<span class="string">'gaussian'</span>,0,0.05);
+imshow(noisy);
+</pre><img vspace="5" hspace="5" src="start_11.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.10<br></p></div><!--
+##### SOURCE BEGIN #####
+% Script for Project-03
+% Author: Michèle Wyss, 10-104-123
+
+%% 1. Sampling and aliasing
+% a)
+
+clear all;
+N = 16;
+
+% Define function handle f. For a given k,
+% f(k) is a function handle to the anonymous function
+% @(x) (cos(...)). Like this, it's easy to bind k to a certain value.
+f = @(k,x) (@(x)(cos(x * 2 * pi * k * 1/N)));
+
+for k = 1:16
+    % Bind f to the given k. fk is the function handle of f with fixed
+    % value k.
+    fk = f(k);
+    
+    %%%%%%%%%%%%%%%%
+    % Generate plot 
+    %%%%%%%%%%%%%%%%
+    subplot(4,4,k);
+    
+    % "Continuous" function
+    fplot(fk,[0 N]); 
+    hold on; 
+    
+    % Sampled function
+    stem(fk(1:N));
+    
+    % Indicate the value of k in the title
+    title(['k = ', num2str(k)]);
+end
+
+%%
+% b)
+%
+% From the plots in a) we can see that f hits Nyquist frequency at k = 8
+% and therefore at 
+%
+% $$ w_0 = \frac{(2\pi \cdot 8)}{N} = \frac{(16\pi)}{16} = \pi$$
+
+%% 2. 1D discrete Fourier Transform (DFT)
+% a)
+
+% Set M = numbers of samples
+M = 16;
+
+% Construct matrix F of size MxM and entries
+% F_nm = n*m
+F = [0:M-1]'*[0:M-1];
+F = exp(-i*2*pi * F/M);
+
+%%
+% b)
+
+% Calculate the matrix U (afterwards, check if it's unitary).
+U = F/sqrt(M);
+
+% There is a minor mistake in the exercise description. In general, for a
+% unitary matrix U, det(U) = 1 does NOT hold. However, the absolute of the
+% determinant is 1.
+absDet = roundn(abs(det(U)),-9);
+if (absDet == 1)
+    disp('|det U| = 1');
+end
+
+% Get the maximum difference between entries in I and the identity matrix
+I = U * conj(U);
+maxDiff = roundn(max(max(abs(eye(M) - I))),-9);
+if (maxDiff == 0)
+    disp('U * conj(U) is the identity matrix.');
+end
+
+I = conj(U) * U;
+maxDiff = roundn(max(max(abs(eye(M) - I))),-9);
+if (maxDiff == 0)
+    disp('conj(U) * U is the identity matrix.');
+end
+
+%%
+% c) 
+%
+% The curves are a bit shifted in their phase. 
+subplot(2,1,1);
+plot(real(F(3,:)),'r','LineWidth',2);
+axis([0 16 -1 1]);
+grid on;
+
+subplot(2,1,2);
+plot(imag(F(3,:)),'r','LineWidth',2);
+axis([0 16 -1 1]);
+grid on;
+
+%%
+% d)
+
+for k = 0:4
+    samplePoints = [0:M-1] *(2*pi/M);
+    fSampled = cos(k*samplePoints);
+
+    transformed = fSampled * F;
+    transformed = fftshift(transformed);
+
+    subplot(5,3,3*k+1);
+    stem(samplePoints,abs(transformed));
+    title(['Mine, k = ',num2str(k)]);
+    axis([0 6 0 20]);
+   
+    subplot(5,3,3*k+2);
+    stem(samplePoints,abs(fftshift(fft(fSampled))));
+    title(['fft, k = ',num2str(k)]);
+    axis([0 6 0 20]);
+    
+    subplot(5,3,3*k+3);
+    stem(samplePoints,abs(fftshift(fft(fSampled))-transformed));
+    title(['|mine - fft|, k = ',num2str(k)]);
+    axis([0 6 0 20]);
+end
+
+%%
+% We can see that the resulting functions have some peeks. They are
+% symmetric because the cosine is an even function .
+
+%%
+% e) ...
+
+%% 3. 2D discrete Fourier Transform (DFT)
+% a)
+img = imresize(im2double(imread('calanque_gray.png')),0.3);
+
+imgFFT = fft2(img);
+
+%%
+% b)
+difference = (sum(img(:))-imgFFT(1,1));
+difference = roundn(difference,-5)
+
+%%
+% c)
+DFTpower = imgFFT.*conj(imgFFT);
+
+DFTmean = mean(DFTpower(:))
+imgSum = sum(sum(abs(img).^2))
+
+difference = (DFTmean-imgSum);
+difference = roundn(difference,-5)
+
+%%
+% d)
+centeredFFT = fftshift(imgFFT);
+
+%%
+% e)
+logScale = log(1 + centeredFFT.*conj(centeredFFT));
+logScale = (logScale-min(logScale(:)))/(max(logScale(:))-min(logScale(:)));
+figure;
+imshow(logScale);
+
+%%
+% f)
+angles = angle(centeredFFT);
+
+normalized = (angles-min(angles(:))) /( max(angles(:)) - min(angles(:)));
+figure;
+imshow(normalized);
+
+%% 4. Constructing a filter directly in the frequency domain
+% a)
+imgFFT = fft2(img, 2*size(img,1)+1, 2*size(img,2)+1);
+imgFFT = fftshift(imgFFT);
+
+%%
+% b)
+filterRadius = 10;
+[x y] = meshgrid(-filterRadius:filterRadius,-filterRadius:filterRadius);
+D = x.^2 + y.^2;
+
+%%
+% c)Try out different parameters:
+
+% For the high pass filter
+D0 = [0.5 0.5 0.5 0.5 0.25 0.5 1 2];
+n = [0.25, 0.5 1 2 1 1 1 1];
+
+% For the band pass filter
+W = [1 2 3 4 5 6 7 8];
+
+for k = 1:8
+    highPass = -1./(1+(D/D0(k)).^(2*n(k)));
+    subplot(4,2,k);
+    normalized = highPass-min(highPass(:))/(max(highPass(:))-min(highPass(:)));
+    imshow(normalized.^2);
+    title(['D0 = ',num2str(D0(k)),', n = ', num2str(n(k))]);
+end
+%%
+% - n describes how "sharp" the filter is, i.e. how fast the fall-off is
+% - D0 describes "where" the fall-off is.
+
+% For visualization of bandwidth, keep n=1 and D0=10 fixed, only vary W.
+for k = 1:8
+    n = 1;
+    D0 = 10;
+    bandPass = 1./(1+((W(k)*D)./(D.^2 - D0^2)).^(2*n));
+    subplot(4,2,k);
+    normalized = bandPass-min(bandPass(:))/(max(bandPass(:))-min(bandPass(:)));
+    imshow(normalized.^2);
+    title(['D0 = ',num2str(D0),', n = ', num2str(n),', W = ',num2str(W(k))]);
+end
+
+%%
+% W describes how fat the ring (bandwidth) is :-)
+
+%%
+% d)
+
+% The filter radius should be big enough such that the whole image can be
+% multiplied with it.
+filterRadius = [floor((size(imgFFT,1))/2), floor(size(imgFFT,2)/2)];
+[x y] = meshgrid(-filterRadius(2):filterRadius(2),-filterRadius(1):filterRadius(1));
+D = x.^2 + y.^2; size(D);
+
+% Apply high pass filter
+D0 = [0.5 0.5 0.5 0.5 0.25 0.5 1 2];
+n = [0.25, 0.5 1 2 1 1 1 1];
+figure;
+for k = 1:8
+    highPass = -1./(1+(D/D0(k)).^(2*n(k)));
+    subplot(4,2,k);
+    filtered = imgFFT .* highPass;
+    imshow(filtered.*conj(filtered));
+    title(['D0 = ',num2str(D0(k)),', n = ', num2str(n(k))]);
+end
+
+% Apply band pass filter
+W = [0.1 0.2 4 5 7 6 5 3];
+figure;
+for k = 1:8
+    n = 1;
+    D0 = 3;
+    bandPass = 1./(1+((W(k)*D)./(D.^2 - D0^2)).^(2*n));
+    subplot(4,2,k);
+    filtered = imgFFT .* bandPass;
+    normalized = (filtered-min(filtered(:)))/(max(filtered(:))-min(filtered(:)));
+    power = normalized.*conj(normalized);
+    imshow(power);
+    
+    title(['D0 = ',num2str(D0),', n = ', num2str(n),', W = ',num2str(W(k))]);
+end
+
+%% 5. Image restoration
+% a)
+
+G = fspecial('gaussian', 6, 2);
+blurred = imfilter(img,G);
+imshow(blurred);
+
+%%
+% b)
+noisy = imnoise(img,'gaussian',0,0.05);
+imshow(noisy);
+
+##### SOURCE END #####
+--></body></html>
