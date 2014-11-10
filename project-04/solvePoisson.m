@@ -15,25 +15,18 @@ function [out] = solvePoisson(target, gradient, mask)
 %
 %   It is assumed that target, gradient and mask have the same resolution.
 
-out = zeros(size(target));
-
-% Boundary pixels are just copied from the target
-out(mask==1) = target(mask==1);
+out = target;
 
 % For the unknown pixels, perform Gauss-Seidel iterations
-iterations = 2000;
+iterations = 400;
 
 % I and J contain the x- and y-coordinates of the pixels that are 0 in the
 % mask.
 [I,J] = find(mask(:,:)==0);
 neighborhoodSize = 4;
 
-% Initialization
-for k=1:length(I) 
-	i = I(k);
-	j = J(k); 
-	out(i,j) = 0.5;
-end
+h = waitbar(0,'Gauss-Seidel...');
+
 for iter=1:iterations
     for k=1:length(I) 
         i = I(k);
@@ -43,20 +36,7 @@ for iter=1:iterations
         
         out(i,j) = (sumFq + sumVpq)/neighborhoodSize;
     end
+    waitbar(iter/iterations)
 end
 
-%%%%%%%%%%%%%%
-% Test it out:
-%%%%%%%%%%%%%%%
-% img = [   1 2 2 2 2 2 ; 
-%           2 3 3 3 3 3; 
-%           3 4 4 4 4 4; 
-%           4 5 5 5 5 5];
-% gradX = imfilter(img, [-1 1], 'same')
-% gradY = imfilter(img, [-1; 1], 'same')
-% grad = zeros([size(gradY) 2]);
-% grad(:,:,1) = gradX;
-% grad(:,:,2) = gradY;
-% mask = ones(size(gradY));
-% mask(2:3,2:3) = 0
-% solvePoisson(img, grad, mask) - img
+close(h);
