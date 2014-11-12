@@ -27,3 +27,14 @@ out = removeHighlights(image,mask);
 figure(4);
 imshow([image out]);
 title('Highlight removal');
+
+%% Assignment 2.1 - Interface
+image = im2double(imread('imgs/highlightRemoval_input1.png'));
+figure(1); 
+imshow(image); 
+h = imfreehand(gca,'closed',true);
+input('Foreground/Background? f/b: ','s');
+h = imfreehand(gca,'closed',false);
+input('Foreground/Background? f/b: ','s');
+imtool(h.createMask);
+close(1);
