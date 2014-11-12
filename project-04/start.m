@@ -30,11 +30,27 @@ title('Highlight removal');
 
 %% Assignment 2.1 - Interface
 image = im2double(imread('imgs/highlightRemoval_input1.png'));
+fmask = zeros([size(image,1) size(image,2)]);
+bmask = zeros([size(image,1) size(image,2)]);
+
 figure(1); 
-imshow(image); 
-h = imfreehand(gca,'closed',true);
-input('Foreground/Background? f/b: ','s');
-h = imfreehand(gca,'closed',false);
-input('Foreground/Background? f/b: ','s');
-imtool(h.createMask);
+imshow(image);
+
+% Foreground
+drawMoreRegions = 1;
+while (drawMoreRegions>0)
+    h = imfreehand(gca,'closed',true);
+    setColor(h,'red');
+    drawMoreRegions = input('More foreground regions? [0=no, 1=yes] ');
+    fmask = fmask + createMask(h);
+end
+
+% Background
+drawMoreRegions = 1;
+while (drawMoreRegions>0)
+    h = imfreehand(gca,'closed',true);
+    setColor(h,'blue');
+    drawMoreRegions = input('More background regions? [0=no, 1=yes] ');
+    bmask = bmask + createMask(h);
+end
 close(1);
