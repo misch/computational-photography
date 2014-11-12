@@ -17,3 +17,13 @@ out = gradientMixing(background,foreground);
 figure(2);
 imshow([background foreground out]);
 title('Gradient mixing');
+
+%% Assignemnt 1.4 - Highlight removal
+image = im2double(imread('imgs/highlightRemoval_input1.png'));
+% image = imresize(image,0.25);
+mask = im2double(imread('imgs/highlightRemoval_mask1.png'));
+% mask = imresize(mask,0.25);
+out = removeHighlights(image,mask);
+figure(4);
+imshow([image out]);
+title('Highlight removal');
