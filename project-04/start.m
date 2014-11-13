@@ -29,7 +29,7 @@ imshow([image out]);
 title('Highlight removal');
 
 %% Assignment 2.1 - Interface
-img = im2double(imread('imgs/cow.jpg'));
+img = im2double(imread('imgs/fbcars.jpg'));
 
 [fmask bmask] = getMasksFromUser(img);
 
@@ -51,8 +51,8 @@ bcolors = colors(:,bindices);
 
 
 % Fit Gaussian mixture model with 3 components
-backgroundModel = gmdistribution.fit(bcolors',2);
-foregroundModel = gmdistribution.fit(fcolors',2);
+backgroundModel = gmdistribution.fit(bcolors',3);
+foregroundModel = gmdistribution.fit(fcolors',3);
 
 backgroundpdf = pdf(backgroundModel,reshape(img,size(img,1)*size(img,2),[]));
 foregroundpdf = pdf(foregroundModel,reshape(img,size(img,1)*size(img,2),[]));
@@ -63,30 +63,37 @@ figure();
 imshow([background2d foreground2d]);
 title('Background- and foreground probabilities');
 
-% Visualize mean
+% Visualize mean colors of fore- and background
 onlyOnes = ones(50,50,3);
 meanColorB = backgroundModel.mu;
 meanColorF = foregroundModel.mu;
-
 
 onlyOnes = ones(100,100,3);
 
 col1 = meanColorB(1,:);
 col2 = meanColorB(2,:);
+col3 = meanColorB(3,:);
+
 
 b1 = onlyOnes; b1(:,:,1) = col1(1); b1(:,:,2) = col1(2); b1(:,:,3) = col1(3);
 b2 = onlyOnes; b2(:,:,1) = col2(1); b2(:,:,2) = col2(2); b2(:,:,3) = col2(3);
+b3 = onlyOnes; b3(:,:,1) = col3(1); b3(:,:,2) = col3(2); b3(:,:,3) = col3(3);
 
 col1 = meanColorF(1,:);
 col2 = meanColorF(2,:);
+col3 = meanColorF(3,:);
 
 f1 = onlyOnes; f1(:,:,1) = col1(1); f1(:,:,2) = col1(2); f1(:,:,3) = col1(3);
 f2 = onlyOnes; f2(:,:,1) = col2(1); f2(:,:,2) = col2(2); f2(:,:,3) = col2(3);
+f3 = onlyOnes; f3(:,:,1) = col3(1); f3(:,:,2) = col3(2); f3(:,:,3) = col3(3);
 
 figure();
-imshow([b1 b2]);
+imshow([b1 b2 b3]);
 title('Means of background colors');
 
-figure();
-imshow([f1 f2]);
+figure();G
+imshow([f1 f2 f3]);
 title('Means of foreground colors');
+
+% Add path to GCMex
+addpath('./GCMex');
