@@ -18,6 +18,7 @@ for i = 1:3
     grad(:,:,1) = gradX;
     grad(:,:,2) = gradY;
     
+    % 20.11.2014: This should be the L1-norm  instead of L2...!
     gradient_magnitude = sqrt(grad(:,:,1).^2 + grad(:,:,2).^2);
 
     gradient_magnitude(gradient_magnitude<threshold) = threshold;

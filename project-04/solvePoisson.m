@@ -18,7 +18,7 @@ function [out] = solvePoisson(target, gradient, mask)
 out = target;
 
 % For the unknown pixels, perform Gauss-Seidel iterations
-iterations = 400;
+iterations = 100;
 
 % I and J contain the x- and y-coordinates of the pixels that are 0 in the
 % mask.
