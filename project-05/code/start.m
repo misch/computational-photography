@@ -2,6 +2,7 @@
 
 % load source and target images
 source = im2double(imread('imgs/source.png'));
+source = source(:,1:300,:);
 target = im2double(imread('imgs/target.png'));
 
 % sourcePoints: Nx2-matrix (N points with x- and y-coords)
@@ -30,23 +31,22 @@ number_of_triangles = size(delaunay_source,1);
 for t = 0 : 1/frames:1
     interpolated_points = (1-t)*sourcePoints + t*targetPoints;
     for triangle = 1:number_of_triangles
-       idx = delaunay_source(i,:);
+       idx = delaunay_source(triangle,:);
 
        vert1_source = sourcePoints(idx(1),:);
        vert2_source = sourcePoints(idx(2),:);
        vert3_source = sourcePoints(idx(3),:);
        
-       vert1_target = interpolated_points(idx(1),:);
-       vert2_target = interpolated_points(idx(2),:);
-       vert3_target = interpolated_points(idx(3),:);
-        
-        % Calculate affine transformation
-       source_part = [vert1_source 1; vert2_source 1; vert3_source 1]'
-       target_part = [vert1_target 1; vert2_target 1; vert3_target 1]'
-       T = source_part * inv(target_part);
-    end
-end
-
+       vert1_interpolated = interpolated_points(idx(1),:);
+       vert2_interpolated = interpolated_points(idx(2),:);
+       vert3_interpolated = interpolated_points(idx(3),:);
+       
+       vert1_target = targetPoints(idx(1),:);
+       vert2_target = targetPoints(idx(2),:);
+       vert3_target = targetPoints(idx(3),:);
+       
+       % Compute bounding box
+       [minBound maxBound] = getBoundingBox(vert1_interpolated,vert2_interpolated,vert3_interpolated);
 
 % mark triangle vertices with a red '+'
 figure(1); 
