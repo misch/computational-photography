@@ -47,6 +47,13 @@ for t = 0 : 1/frames:1
        
        % Compute bounding box
        [minBound maxBound] = getBoundingBox(vert1_interpolated,vert2_interpolated,vert3_interpolated);
+       
+       % Calculate affine transformation
+       source_part = [vert1_source 1; vert2_source 1; vert3_source 1]';
+       interpolated_part = [vert1_interpolated 1; vert2_interpolated 1; vert3_interpolated 1]';
+       target_part = [vert1_target 1; vert2_target 1; vert3_target 1]';
+       T_interpolatedToSource = source_part * inv(interpolated_part);
+       T_interpolatedToTarget = target_part * inv(interpolated_part);
 
 % mark triangle vertices with a red '+'
 figure(1); 
