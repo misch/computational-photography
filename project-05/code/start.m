@@ -11,24 +11,28 @@ target = im2double(imread('imgs/target.png'));
 % [x1 y1
 %  x2 y2
 %  x3 y3]
-[sourcePoints targetPoints] =  cpselect(source,target,'Wait',true);
+% [sourcePoints targetPoints] = cpselect(source,target,sourcePoints,targetPoints,'Wait',true);
+load('selectedPoints.mat');
+[sourcePoints targetPoints] = cpselect(source,target,sourcePoints,targetPoints,'Wait',true);
 
 % Get delaunay triangulation of the chosen points in the source and target
 % image
 delaunay_source = delaunay(sourcePoints(:,1),sourcePoints(:,2));
-delaunay_target = delaunay(targetPoints(:,1),targetPoints(:,2));
+% delaunay_target = delaunay(targetPoints(:,1),targetPoints(:,2));
 
 % Visualize delaunay triangulation
-figure(1); imshow(source); hold on; triplot(delaunay_source,sourcePoints(:,1),sourcePoints(:,2));
-figure(2); imshow(target); hold on; triplot(delaunay_target,targetPoints(:,1),targetPoints(:,2));
+figure(1);% imshow(source); hold on; triplot(delaunay_source,sourcePoints(:,1),sourcePoints(:,2));
+% figure(2); imshow(target); hold on; triplot(delaunay_target,targetPoints(:,1),targetPoints(:,2));
 
 frames = 10;
 
 interpolated_images = zeros([size(source), frames]);
 number_of_triangles = size(delaunay_source,1);
+out_images = zeros([size(source) frames+1]);
 
-
+currentFrame = 0;
 for t = 0 : 1/frames:1
+    currentFrame = currentFrame+1;
     interpolated_points = (1-t)*sourcePoints + t*targetPoints;
     for triangle = 1:number_of_triangles
        idx = delaunay_source(triangle,:);
@@ -54,7 +58,43 @@ for t = 0 : 1/frames:1
        target_part = [vert1_target 1; vert2_target 1; vert3_target 1]';
        T_interpolatedToSource = source_part * inv(interpolated_part);
        T_interpolatedToTarget = target_part * inv(interpolated_part);
+       
+       % put all pixel coordinates from the bounding box into a 2xN-matrix
+       [x y] = meshgrid(minBound(1):maxBound(1),minBound(2):maxBound(2));
+       pixel_coordinates = [x(:) y(:)]';
+       
+       % get the pixels that lie within the triangle
+       mask = rasterize(interpolated_part(1:2,:),pixel_coordinates);
+       pixelIndices = pixel_coordinates.*repmat(mask,2,1);
+       pixelIndices = reshape(pixelIndices(pixelIndices>0),2,[]);
+       
+       % --> homogeneous coordinates
+       pixelIndices = [pixelIndices; ones(1,size(pixelIndices,2))];
+       
+       % get corresponding pixels in source and target image (bilinear
+       % interpolation)
+       sourcePixels = T_interpolatedToSource * pixelIndices;
+       targetPixels = T_interpolatedToTarget * pixelIndices;
+       
+       sourceCols = bilinearInterpolatedColors(source,sourcePixels);
+       targetCols = bilinearInterpolatedColors(target,targetPixels);
 
-% mark triangle vertices with a red '+'
-figure(1); 
-plot(vert2(1),vert2(2),'+r'); hold on; plot(vert3(1),vert3(2),'+r');
+       % blend colors
+       blendedCols = (1-t)*sourceCols + t*targetCols;
+
+       % put blended colors back to image using the above indices
+       for j=1:size(pixelIndices,2)
+        out_images(pixelIndices(2,j),pixelIndices(1,j),:,currentFrame) = blendedCols(:,j);
+       end
+    end
+end
+
+% Make movie
+makeMovie = false;
+
+if (makeMovie)
+    out2 = out_images;
+    out2(:,:,:,end+1:end+size(out_images,4)) = flipdim(out_images,4);
+    mov = immovie(out2);
+    movie2avi(mov,'morphing.avi','compression','None','FPS',5);
+end
