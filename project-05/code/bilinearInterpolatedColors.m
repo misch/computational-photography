@@ -23,5 +23,4 @@ for i = 1:size(c_x,2)
  c_1 = (1-u(i)).*image(y0(i),x0(i),:) + u(i).*image(y0(i),x1(i),:);
  c_0 = (1-u(i)).*image(y1(i),x0(i),:) + u(i)*image(y1(i),x1(i),:);
  out(:,i) = (1-v(i))*c_0 + v(i)*c_1;
-%  out(:,i) = image(y0(i),x0(i));
 end

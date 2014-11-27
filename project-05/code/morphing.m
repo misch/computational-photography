@@ -1,9 +1,11 @@
 % Project 05
 
 % load source and target images
-source = im2double(imread('imgs/source.png'));
-source = source(:,1:300,:);
-target = im2double(imread('imgs/target.png'));
+% source = im2double(imread('imgs/source.png'));
+source = im2double(imread('imgs/rain.png'));
+% source = source(:,1:300,:);
+target = im2double(imread('imgs/thunder.jpg'));
+target = imresize(target,[400,400]);
 
 % sourcePoints: Nx2-matrix (N points with x- and y-coords)
 % targetPoints: Nx2-matrix (N points with x- and y-coords)
@@ -11,20 +13,17 @@ target = im2double(imread('imgs/target.png'));
 % [x1 y1
 %  x2 y2
 %  x3 y3]
-% [sourcePoints targetPoints] = cpselect(source,target,sourcePoints,targetPoints,'Wait',true);
-load('selectedPoints.mat');
+% load('selectedPoints.mat');
 [sourcePoints targetPoints] = cpselect(source,target,sourcePoints,targetPoints,'Wait',true);
+% [sourcePoints targetPoints] = cpselect(source,target,'Wait',true);
 
-% Get delaunay triangulation of the chosen points in the source and target
-% image
+% Get delaunay triangulation of the chosen points in the source image
 delaunay_source = delaunay(sourcePoints(:,1),sourcePoints(:,2));
-% delaunay_target = delaunay(targetPoints(:,1),targetPoints(:,2));
 
 % Visualize delaunay triangulation
-figure(1);% imshow(source); hold on; triplot(delaunay_source,sourcePoints(:,1),sourcePoints(:,2));
-% figure(2); imshow(target); hold on; triplot(delaunay_target,targetPoints(:,1),targetPoints(:,2));
+figure(1); imshow(source); hold on; triplot(delaunay_source,sourcePoints(:,1),sourcePoints(:,2));
 
-frames = 10;
+frames = 20;
 
 interpolated_images = zeros([size(source), frames]);
 number_of_triangles = size(delaunay_source,1);
@@ -90,11 +89,11 @@ for t = 0 : 1/frames:1
 end
 
 % Make movie
-makeMovie = false;
+makeMovie = true;
 
 if (makeMovie)
     out2 = out_images;
     out2(:,:,:,end+1:end+size(out_images,4)) = flipdim(out_images,4);
     mov = immovie(out2);
-    movie2avi(mov,'morphing.avi','compression','None','FPS',5);
+    movie2avi(mov,'morphingClouds.avi','compression','None','FPS',10);
 end
