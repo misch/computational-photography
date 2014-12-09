@@ -1,5 +1,4 @@
-%% Project 6
-
+%% Find all the files of the lightfield, put them into one huge array
 % find the folder
 % folder = uigetdir();
 folder = 'lightfields/pink_animal/';
@@ -7,11 +6,10 @@ if ~(folder==0)
     % get the names of all image files
     searchFor = strcat(folder, '/*.png');
     dirListing = dir(searchFor);
+   
     % get number of images
     numFrames = length(dirListing);
-    % open images and store it in array
-    % first image
-    % use full path because the folder may not be the active path
+   
     fileName = fullfile(folder,dirListing(1).name);
     img1 = imread(fileName);
     images = zeros([size(img1) numFrames]);
@@ -20,8 +18,8 @@ if ~(folder==0)
         fileName = fullfile(folder,dirListing(frame).name)
         images(:,:,:,frame) = im2double(imread(fileName));
     end
-
-    % Display images as a movie
+    
+%% Visualize lightfields as a movie
     for frame = 1:numFrames
         F(frame) = im2frame(images(:,:,:,frame));
     end
