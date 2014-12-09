@@ -25,3 +25,39 @@ chosenPoints = [x_chosen y_chosen]';
 rectanglePoints = [x_rect; y_rect];
 
 H = computeHomography(chosenPoints,rectanglePoints);
+% H = inv(H);
+
+% Compute bounding box
+ minX = floor(min(chosenPoints(1,:)));
+ maxX = ceil(max(chosenPoints(1,:)));
+ minY = floor(min(chosenPoints(2,:)));
+ maxY = ceil(max(chosenPoints(2,:)));
+
+% put all pixel coordinates from the bounding box into a 2xN-matrix
+[x y] = meshgrid(minX:maxX,minY:maxY);
+pixel_coordinates = [x(:) y(:)]';
+
+% homogeneous coords 
+pixel_coordinates(3,:) = ones(1,size(pixel_coordinates,2));
+
+transformed_points = H\pixel_coordinates;
+projected_points = transformed_points ./ repmat(transformed_points(3,:),3,1);
+
+x_proj = projected_points(1,:);
+x_proj(x_proj>size(img,2)) = size(img,2);
+
+y_proj = projected_points(2,:);
+y_proj(y_proj>size(img,1)) = size(img,1);
+
+projected_points(1,:) = x_proj;
+projected_points(2,:) = y_proj;
+projected_points(projected_points<1) = 1;
+
+colors = bilinearInterpolatedColors(img,projected_points);
+rectified = zeros(size(img));
+
+for j=1:size(pixel_coordinates,2)
+     rectified(pixel_coordinates(2,j),pixel_coordinates(1,j),:) = colors(:,j);
+end
+
+imtool(rectified);
