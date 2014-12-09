@@ -32,12 +32,20 @@ for i=1:length(scanlines)
     scanline = scanlines(i);
     permuted = permute(images,[4 2 3 1]);
 
-    figure((i-1)*2+1);
+    figure((i-1)*3+1);
     img = images(:,:,:,60);
     imshow(img); hold on; plot([0 size(img,2)], [scanline scanline],'r','LineWidth',1);
     title(['Row #',num2str(scanline)]);
 
-    figure((i-1)*2+2);
+    figure((i-1)*3+2);
     imshow(permuted(:,:,:,scanline));
     title(['EPI #',num2str(scanline)]);
 end
+
+%% Show Fourier Transforms
+figure();
+imshow(logPowerSpec(permuted(:,:,:,scanlines(1))));
+title(['Power spectrum of EPI #',num2str(scanlines(1))]);
+figure();
+imshow(logPowerSpec(permuted(:,:,:,scanlines(2))));
+title(['Power spectrum of EPI #',num2str(scanlines(2))]);
