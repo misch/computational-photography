@@ -37,7 +37,7 @@ This is because the pink animal is much closer to the camera than the rest and t
 	  \caption*{Scanline at row 400}
 	\end{subfigure}
 	
-	\vspace{2mm}
+	\vspace{3mm}
 	\begin{subfigure}[h]{0.48\textwidth}
 	  \includegraphics[width=\textwidth]{EPI50}
 	  \caption*{EPI at 50}
@@ -69,4 +69,48 @@ For the same scanlines as above, the Power spectrum of the two EPI's is visualiz
 \caption{Visualized power spectrum of the two EPI's at scanlines 50 and 400.}
 \label{fig:powerSpectrum}
 \end{figure}
+
+\section*{View Reconstruction}
+\subsection*{Linear Interpolation}
+Linearly interpolating two camera views results in double edges because the views are not aligned. With increasing $k$, the artifacts are more and more clearly visible (see for example Figure \ref{fig:linearInterpolation}). \todo{Aliasing?}
+\begin{figure}[ht]
+	\begin{subfigure}[h]{0.48\textwidth}
+	  \includegraphics[width=\textwidth]{view60}
+	  \caption*{View number 60}
+	\end{subfigure}
+    	~
+	\begin{subfigure}[h]{0.48\textwidth}
+	  \centering
+	  \includegraphics[width=\textwidth]{LinearInterpolation60_61}
+	  \caption*{k=1}
+	\end{subfigure}
+	
+	\vspace{2mm}
+	\begin{subfigure}[h]{0.48\textwidth}
+	  \includegraphics[width=\textwidth]{LinearInterpolation60_62}
+	  \caption*{k=2}
+	\end{subfigure}
+    	~
+	\begin{subfigure}[h]{0.48\textwidth}
+	  \centering
+	  \includegraphics[width=\textwidth]{LinearInterpolation60_63}
+	  \caption*{k=3}
+	\end{subfigure}
+	
+	\vspace{2mm}
+	\begin{subfigure}[h]{0.48\textwidth}
+	  \centering
+	  \includegraphics[width=\textwidth]{LinearInterpolation60_64}
+	  \caption*{k=4}
+	\end{subfigure}
+	~
+	\begin{subfigure}[h]{0.48\textwidth}
+	  \centering
+	  \includegraphics[width=\textwidth]{LinearInterpolation60_65}
+	  \caption*{k=5}
+	\end{subfigure}
+\caption{Simple linear interpolation of the camera views $60$ and $(60 + k)$ in ray space leads to very large artifacts (double edges).}
+\label{fig:linearInterpolation}
+\end{figure}
+
 \end{document}
