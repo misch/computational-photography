@@ -19,3 +19,10 @@ for k = 1:5
 %     imwrite(finalImg,sprintf('LinearInterpolation%d_%d.png',cameraView1,cameraView2));
 end
 
+%% Sheared Interpolation
+shearedEPIs = zeros(size(EPIs));
+center = 60;
+shear = 16;
+for nEPI = 1:size(EPIs,4)
+    shearedEPIs(:,:,:,nEPI) = shearEPI(testepi,center,shear);
+end
