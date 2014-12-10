@@ -18,13 +18,13 @@ if ~(folder==0)
         fileName = fullfile(folder,dirListing(frame).name)
         images(:,:,:,frame) = im2double(imread(fileName));
     end
+end
     
 %% Visualize lightfields as a movie
     for frame = 1:numFrames
         F(frame) = im2frame(images(:,:,:,frame));
     end
     movie(F);
-end
 
 %% Show EPI's
 scanlines = [400 50];
