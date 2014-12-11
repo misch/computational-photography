@@ -22,7 +22,23 @@ end
 %% Sheared Interpolation
 shearedEPIs = zeros(size(EPIs));
 center = 60;
-shear = 16;
+k = 4;
+shear = 20;
+
 for nEPI = 1:size(EPIs,4)
-    shearedEPIs(:,:,:,nEPI) = shearEPI(testepi,center,shear);
+    shearedEPIs(:,:,:,nEPI) = shearEPI(EPIs(:,:,:,nEPI),center,shear);
 end
+
+cameraView1 = center - floor(k/2);
+cameraView2 = center + ceil(k/2);
+numEPIs = size(EPIs,4);
+
+for i = 1:numEPIs
+    finalImg(i,:,:) = 0.5*(shearedEPIs(cameraView1,:,:,i) + shearedEPIs(cameraView2,:,:,i));
+end
+
+figure();
+imshow(finalImg);
+titleStr1 = sprintf('Sheared interpolation of views %d and %d',cameraView1, cameraView2);
+titleStr2 = sprintf('%d pixels shear',shear);
+title([{titleStr1, titleStr2}]);

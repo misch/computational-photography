@@ -82,35 +82,169 @@ Linearly interpolating two camera views results in double edges because the view
 	\begin{subfigure}[h]{0.48\textwidth}
 	  \centering
 	  \includegraphics[width=\textwidth]{LinearInterpolation60_61}
-	  \caption*{k=1}
+	  \caption*{$k=1$}
 	\end{subfigure}
 	
 	\vspace{2mm}
 	\begin{subfigure}[h]{0.48\textwidth}
 	  \includegraphics[width=\textwidth]{LinearInterpolation60_62}
-	  \caption*{k=2}
+	  \caption*{$k=2$}
 	\end{subfigure}
     	~
 	\begin{subfigure}[h]{0.48\textwidth}
 	  \centering
 	  \includegraphics[width=\textwidth]{LinearInterpolation60_63}
-	  \caption*{k=3}
+	  \caption*{$k=3$}
 	\end{subfigure}
 	
 	\vspace{2mm}
 	\begin{subfigure}[h]{0.48\textwidth}
 	  \centering
 	  \includegraphics[width=\textwidth]{LinearInterpolation60_64}
-	  \caption*{k=4}
+	  \caption*{$k=4$}
 	\end{subfigure}
 	~
 	\begin{subfigure}[h]{0.48\textwidth}
 	  \centering
 	  \includegraphics[width=\textwidth]{LinearInterpolation60_65}
-	  \caption*{k=5}
+	  \caption*{$k=5$}
 	\end{subfigure}
 \caption{Simple linear interpolation of the camera views $60$ and $(60 + k)$ in ray space leads to very large artifacts (double edges).}
 \label{fig:linearInterpolation}
+\end{figure}
+\subsection*{Sheared Inpterpolation}
+Using sheared interpolation, the results can be improved. The objects are aligned in depth by shearing the EPI's. The depth correspond to a slope in ray space. The depth in focus is the one depth where the slope is a vertical line in ray space. So, in order to focus on the pink animal, we want the pink lines to be vertical in the EPI's. In Figure \ref{fig:shearedInterpolationEPIs}, different shears of the EPI at scanline 70 can be seen. It seems that 16 pixels is the best we can get in order to make the pink line vertical.
+\begin{figure}[ht]
+	\begin{subfigure}[h]{0.48\textwidth}
+	  \includegraphics[width=\textwidth]{shear0}
+	  \caption*{Original EPI \#70}
+	\end{subfigure}
+    	~
+	\begin{subfigure}[h]{0.48\textwidth}
+	  \centering
+	  \includegraphics[width=\textwidth]{shear10}
+	  \caption*{10 pixels shear}
+	\end{subfigure}
+	
+	\vspace{2mm}
+	\begin{subfigure}[h]{0.48\textwidth}
+	  \includegraphics[width=\textwidth]{shear12}
+	  \caption*{12 pixels shear}
+	\end{subfigure}
+    	~
+	\begin{subfigure}[h]{0.48\textwidth}
+	  \centering
+	  \includegraphics[width=\textwidth]{shear14}
+	  \caption*{14 pixels shear}
+	\end{subfigure}
+	
+	\vspace{2mm}
+	\begin{subfigure}[h]{0.48\textwidth}
+	  \centering
+	  \includegraphics[width=\textwidth]{shear15}
+	  \caption*{15 pixels shear}
+	\end{subfigure}
+	~
+	\begin{subfigure}[h]{0.48\textwidth}
+	  \centering
+	  \includegraphics[width=\textwidth]{shear16}
+	  \caption*{16 pixels shear}
+	\end{subfigure}
+		
+	\vspace{2mm}
+	\begin{subfigure}[h]{0.48\textwidth}
+	  \centering
+	  \includegraphics[width=\textwidth]{shear17}
+	  \caption*{17 pixels shear}
+	\end{subfigure}
+	~
+	\begin{subfigure}[h]{0.48\textwidth}
+	  \centering
+	  \includegraphics[width=\textwidth]{shear20}
+	  \caption*{20 pixels shear}
+	\end{subfigure}
+\caption{The EPI at scanline 70, with different shears. Shearing by 16 pixels seems to yield the best result to make the pink line vertical.}
+\label{fig:shearedInterpolationEPIs}
+\end{figure}
+
+Interpolating the sheared EPI's corresponds to a sheard interpolation and the results are clearly better than without the shear. See some results for different numbers of $k$ and a shear of 16 pixels in Figure \ref{fig:shearedInterpolationDifferentK}. Note that with increasing shear, the image size decreases because of the missing values caused by the translation of the single scanlines (dark boundaries on the left and right side of the images in Figures \ref{fig:shearedInterpolationDifferentK} and \ref{fig:shearedInterpolationDifferentShear}.
+\begin{figure}[ht]
+	\begin{subfigure}[h]{0.48\textwidth}
+	  \includegraphics[width=\textwidth]{ShearedInterpolation60_61}
+	  \caption*{$k = 1$}
+	\end{subfigure}
+    	~
+	\begin{subfigure}[h]{0.48\textwidth}
+	  \centering
+	  \includegraphics[width=\textwidth]{ShearedInterpolation59_61}
+	  \caption*{$k= 2$}
+	\end{subfigure}
+	
+	\vspace{2mm}
+	\begin{subfigure}[h]{0.48\textwidth}
+	  \includegraphics[width=\textwidth]{ShearedInterpolation59_62}
+	  \caption*{$k=3$}
+	\end{subfigure}
+    	~
+	\begin{subfigure}[h]{0.48\textwidth}
+	  \centering
+	  \includegraphics[width=\textwidth]{ShearedInterpolation58_62}
+	  \caption*{$k=4$}
+	\end{subfigure}
+	
+	\vspace{2mm}
+	\begin{subfigure}[h]{0.48\textwidth}
+	  \centering
+	  \includegraphics[width=\textwidth]{ShearedInterpolation58_63}
+	  \caption*{$k=5$}
+	\end{subfigure}
+	~
+	\begin{subfigure}[h]{0.48\textwidth}
+	  \centering
+	  \includegraphics[width=\textwidth]{ShearedInterpolation57_63}
+	  \caption*{k=6}
+	\end{subfigure}
+\caption{Some results obtained by interpolating the sheared EPI's using a shear of 16 pixels.}
+\label{fig:shearedInterpolationDifferentK}
+\end{figure}
+For some examples of what happens with different shears, see Figure \ref{fig:shearedInterpolationDifferentShear}. Different shears cause other depths to be in focus, namely the ones that are vertical in the sheared EPI. Especially, some shears can cause very bad results if the corresponding vertical line does not appear in the EPI, that is, when there's no object at a particular depth in the scene. This leads to an image where everything is out of focus.
+\begin{figure}[ht]
+	\begin{subfigure}[h]{0.48\textwidth}
+	  \includegraphics[width=\textwidth]{shear2}
+	  
+	  \vspace{2mm}
+	  \includegraphics[width=\textwidth]{ShearedInterpolation58_62_shear2}
+	  \caption*{2 pixels shear}
+	\end{subfigure}
+    	~
+	\begin{subfigure}[h]{0.48\textwidth}
+	  \centering
+	  \includegraphics[width=\textwidth]{shear5}
+	  
+	  \vspace{2mm}
+	  \includegraphics[width=\textwidth]{ShearedInterpolation58_62_shear5}
+	  \caption*{5 pixels shear}
+	\end{subfigure}
+	
+	\vspace{2mm}
+	\begin{subfigure}[h]{0.48\textwidth}
+	  \includegraphics[width=\textwidth]{shear16}
+	  
+	  \vspace{2mm}
+	  \includegraphics[width=\textwidth]{ShearedInterpolation58_62_shear16}
+	  \caption*{16 pixels shear}
+	\end{subfigure}
+    	~
+	\begin{subfigure}[h]{0.48\textwidth}
+	  \centering
+	  \includegraphics[width=\textwidth]{shear20}
+	  
+	  \vspace{2mm}
+	  \includegraphics[width=\textwidth]{ShearedInterpolation58_62_shear20}
+	  \caption*{20 pixels shear}
+	\end{subfigure}
+\caption{Some results obtained by different amounts of shear and a value of $k=4$. Note that e.g.\ with the 5 pixels shear, there are some things from the background in focus, whereas the 16 pixels shear is focused on the pink animal. The other shears don't focus any of the appearing depths in the image which can be seen from the visualized EPI's. (no vertical lines)}
+\label{fig:shearedInterpolationDifferentShear}
 \end{figure}
 
 \end{document}
