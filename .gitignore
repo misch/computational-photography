@@ -4,3 +4,6 @@
 #LaTex
 *.aux
 *.log
+
+#Project-06
+project-06/lightfields/
