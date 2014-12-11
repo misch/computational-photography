@@ -52,8 +52,7 @@ This is because the pink animal is much closer to the camera than the rest and t
 \label{fig:EPIs}
 \end{figure}
 \section*{Fourier Transform and visualized power spectrum}
-\todo{What can be observed on the images? How can the images be interpreted?}
-For the same scanlines as above, the Power spectrum of the two EPI's is visualized in Figure \ref{fig:powerSpectrum}. The maximum and minimum slope correspond to maximum and minimum \todo{change max and min?} depths in the scene.
+In the Fourier transform, we can see the occuring frequencies. The slopes of the lines are perpendicular to the slopes of the lines in ray space. The horizontal is probably an artifact due to the borders.
 \begin{figure}[ht]
 	\vspace{2mm}
 	\begin{subfigure}[h]{0.48\textwidth}
@@ -72,7 +71,7 @@ For the same scanlines as above, the Power spectrum of the two EPI's is visualiz
 
 \section*{View Reconstruction}
 \subsection*{Linear Interpolation}
-Linearly interpolating two camera views results in double edges because the views are not aligned. With increasing $k$, the artifacts are more and more clearly visible (see for example Figure \ref{fig:linearInterpolation}). \todo{Aliasing?}
+Linearly interpolating two camera views results in double edges because the views are not aligned. With increasing $k$, the artifacts are more and more clearly visible (see for example Figure \ref{fig:linearInterpolation}). 
 \begin{figure}[ht]
 	\begin{subfigure}[h]{0.48\textwidth}
 	  \includegraphics[width=\textwidth]{view60}
@@ -247,4 +246,124 @@ For some examples of what happens with different shears, see Figure \ref{fig:she
 \label{fig:shearedInterpolationDifferentShear}
 \end{figure}
 
+\subsection*{Filtering with Gaussian kernel}
+Filtering the sheared EPI's with Gaussian kernels before interpolating them yield out-of-focus blurs (instead of doubled edges) for the scene depths that are not in focus. Some examples can be seen in Figures \ref{fig:shearedInterpolationGaussDifferentShear} 
+
+\begin{figure}[ht]
+	\begin{subfigure}[h]{0.48\textwidth}
+	  \includegraphics[width=\textwidth]{shearedGauss_k1_shear5_sighor4_sigvert5}
+	  \caption*{Background in focus \\(shear = 5)}
+	\end{subfigure}
+    	~
+	\begin{subfigure}[h]{0.48\textwidth}
+	  \includegraphics[width=\textwidth]{shearedGauss_k1_shear16_sighor4_sigvert5}
+	  \caption*{Animal in focus \\(shear = 16)}
+	\end{subfigure}
+\caption{Two images with different shears. The EPI's were blurred using a Gaussian elliptical filter with $\sigma_{horizontal} = 4$ and $\sigma_{vertical} = 5$. The two inteprolated views are consecutive, i.e.\ $k=1$.}
+\label{fig:shearedInterpolationGaussDifferentShear}
+\end{figure}
+
+\begin{figure}[ht]
+	\begin{subfigure}[h]{0.48\textwidth}
+	  \includegraphics[width=\textwidth]{shearedGauss_k1_shear5_sighor4_sigvert5}
+	  \caption*{Background in focus \\(shear = 5)}
+	\end{subfigure}
+    	~
+	\begin{subfigure}[h]{0.48\textwidth}
+	  \includegraphics[width=\textwidth]{shearedGauss_k1_shear16_sighor4_sigvert5}
+	  \caption*{Animal in focus \\(shear = 16)}
+	\end{subfigure}
+\caption{The same example as in Figure \ref{fig:shearedInterpolationGaussDifferentShear}, but with $k=4$.}
+\label{fig:shearedInterpolationGaussDifferentK}
+\end{figure}
+
+The filter size of the Gaussian filter determines the depth of field. A small filter size corresponds to a small synthetic aperture (large depth of field), and vice versa. Some examples of different filter sizes can be seen in Figures \ref{fig:shearedInterpolationGaussDifferentFilterSize1}, \ref{fig:shearedInterpolationGaussDifferentFilterSize2} and \ref{fig:shearedInterpolationGaussDifferentFilterSize3}. If we adapt the shear such that the background is in focus and use a large enough synthetic aperture size, we can theoretically ``see through'' the foreground object (see Figure \ref{fig:seeThrough}).
+\begin{figure}[ht]
+	\begin{subfigure}[h]{0.48\textwidth}
+	  \includegraphics[width=\textwidth]{shearedGauss_k1_shear16_sighor2_sigvert0-5}
+	  \caption*{$\sigma_{horizontal} = 2, \sigma_{vertical} = 0.5$}
+	\end{subfigure}
+    	~
+	\begin{subfigure}[h]{0.48\textwidth}
+	  \includegraphics[width=\textwidth]{shearedGauss_k1_shear16_sighor2_sigvert20}
+	  \caption*{$\sigma_{horizontal} = 2, \sigma_{vertical} = 20$}
+	\end{subfigure}
+	
+	\vspace{2mm}
+	\begin{subfigure}[h]{0.48\textwidth}
+	  \includegraphics[width=\textwidth]{shearedGauss_k1_shear16_sighor0-5_sigvert5}
+	  \caption*{$\sigma_{horizontal} = 0.5, \sigma_{vertical} = 5$}
+	\end{subfigure}
+    	~
+	\begin{subfigure}[h]{0.48\textwidth}
+	  \includegraphics[width=\textwidth]{shearedGauss_k1_shear16_sighor20_sigvert5}
+	  \caption*{$\sigma_{horizontal} = 20, \sigma_{vertical} = 5$}
+	\end{subfigure}
+\caption{The same example as in Figure \ref{fig:shearedInterpolationGaussDifferentShear}, but with $k=4$.}
+\label{fig:shearedInterpolationGaussDifferentFilterSize1}
+\end{figure}
+
+\begin{figure}[ht]
+	\begin{subfigure}[h]{0.48\textwidth}
+	  \includegraphics[width=\textwidth]{shearedGauss_k1_shear16_sighor5_sigvert10}
+	  \caption*{$\sigma_{horizontal} = 5, \sigma_{vertical} = 10$}
+	\end{subfigure}
+    	~
+	\begin{subfigure}[h]{0.48\textwidth}
+	  \includegraphics[width=\textwidth]{shearedGauss_k1_shear16_sighor2-5_sigvert5}
+	  \caption*{$\sigma_{horizontal} = 2.5, \sigma_{vertical} = 5$}
+	\end{subfigure}
+	
+	\vspace{2mm}
+	\begin{subfigure}[h]{0.48\textwidth}
+	  \includegraphics[width=\textwidth]{shearedGauss_k1_shear16_sighor0-5_sigvert5}
+	  \caption*{$\sigma_{horizontal} = 0.5, \sigma_{vertical} = 5$}
+	\end{subfigure}
+    	~
+	\begin{subfigure}[h]{0.48\textwidth}
+	  \includegraphics[width=\textwidth]{shearedGauss_k1_shear16_sighor20_sigvert5}
+	  \caption*{$\sigma_{horizontal} = 20, \sigma_{vertical} = 5$}
+	\end{subfigure}
+\caption{The same example as in Figure \ref{fig:shearedInterpolationGaussDifferentShear}, but with $k=4$.}
+\label{fig:shearedInterpolationGaussDifferentFilterSize2}
+\end{figure}
+
+\begin{figure}[ht]
+	\begin{subfigure}[h]{0.48\textwidth}
+	  \includegraphics[width=\textwidth]{shearedGauss_k1_shear16_sighor10_sigvert5}
+	  \caption*{$\sigma_{horizontal} = 10, \sigma_{vertical} = 5$}
+	\end{subfigure}
+    	~
+	\begin{subfigure}[h]{0.48\textwidth}
+	  \includegraphics[width=\textwidth]{shearedGauss_k1_shear16_sighor5_sigvert2-5}
+	  \caption*{$\sigma_{horizontal} = 5, \sigma_{vertical} = 2.5$}
+	\end{subfigure}
+	
+	\vspace{2mm}
+	\begin{subfigure}[h]{0.48\textwidth}
+	  \includegraphics[width=\textwidth]{shearedGauss_k1_shear16_sighor5_sigvert0-5}
+	  \caption*{$\sigma_{horizontal} = 5, \sigma_{vertical} = 0.5$}
+	\end{subfigure}
+    	~
+	\begin{subfigure}[h]{0.48\textwidth}
+	  \includegraphics[width=\textwidth]{shearedGauss_k1_shear16_sighor5_sigvert20}
+	  \caption*{$\sigma_{horizontal} = 5, \sigma_{vertical} = 20$}
+	\end{subfigure}
+\caption{The same example as in Figure \ref{fig:shearedInterpolationGaussDifferentShear}, but with $k=4$.}
+\label{fig:shearedInterpolationGaussDifferentFilterSize3}
+\end{figure}
+
+\begin{figure}[ht]
+	\begin{subfigure}[h]{0.48\textwidth}
+	  \includegraphics[width=\textwidth]{shearedGauss_k20_shear5_sighor10_sigvert30}
+	  \caption*{$k=4,\sigma_{horizontal} = 10, \sigma_{vertical} = 30$}
+	\end{subfigure}
+    	~
+	\begin{subfigure}[h]{0.48\textwidth}
+	  \includegraphics[width=\textwidth]{shearedGauss_k5_shear5_sighor5_sigvert45}
+	  \caption*{$k=5, \sigma_{horizontal} = 5, \sigma_{vertical} = 45$}
+	\end{subfigure}
+\caption{Using a large filter size, we can simulate a large synthetic aperture and see through some objects.}
+\label{fig:seeThrough}
+\end{figure}
 \end{document}
